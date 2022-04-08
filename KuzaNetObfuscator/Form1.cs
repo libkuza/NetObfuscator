@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -19,8 +19,10 @@ namespace KuzaNetObfuscator
         private void Main_Load(object sender, EventArgs e)
         {
             text_newname.Text = RandomString(9);
+            box_numberofjunk.Text = RandomNumber(3);
         }
 
+        
         private void checkjunk_CheckedChanged(object sender, EventArgs e)
         {
 
@@ -115,6 +117,12 @@ namespace KuzaNetObfuscator
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        public static string RandomNumber(int length)
+        {
+            const string chars = "123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
