@@ -58,24 +58,40 @@ namespace KuzaNetObfuscator
 
         private void btn_go_Click(object sender, EventArgs e)
         {
-            AssemblyDef assembly = AssemblyDef.Load(box_file.Text);
-            ModuleContext modCtx = ModuleDefMD.CreateModuleContext();
-            ModuleDefMD module = ModuleDefMD.Load(box_file.Text, modCtx);
-            if (checkname.Checked)
-            {
-                ProtectName(assembly, module);
-                module.Write(text_newname.Text + ".exe");
+            try {
+                AssemblyDef assembly = AssemblyDef.Load(box_file.Text);
+                ModuleContext modCtx = ModuleDefMD.CreateModuleContext();
+                ModuleDefMD module = ModuleDefMD.Load(box_file.Text, modCtx);
+                if (checkname.Checked)
+                {
+                    ProtectName(assembly, module);
+                    module.Write(text_newname.Text + ".exe");
+                }
+                if (checkjunk.Checked)
+                {
+                    junkattrib(module);
+                    module.Write(text_newname.Text + ".exe");
+                }
+                if (checkstrings.Checked)
+                {
+                    encryptString(module);
+                    module.Write(text_newname.Text + ".exe");
+                }
+                MessageBox.Show("Done!! ", "KuzaNetObfuscator", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                restart();
             }
-            if (checkjunk.Checked)
+            catch
             {
-                junkattrib(module);
-                module.Write(text_newname.Text + ".exe");
+                MessageBox.Show("Something went wrong, maybe no file selected? ", "KuzaNetObfuscator", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            if (checkstrings.Checked)
-            {
-                encryptString(module);
-                module.Write(text_newname.Text + ".exe");
-            }
+            
+            
+        }
+
+        private void restart()
+        {
+            text_newname.Text = RandomString(9);
+            box_numberofjunk.Text = RandomNumber(3);
         }
 
         public void ProtectName(AssemblyDef assembly, ModuleDef mod)
@@ -162,6 +178,36 @@ namespace KuzaNetObfuscator
                     }
                 }
             }
+        }
+
+        private void box_file_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Link;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void box_file_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[]; 
+            if (files != null && files.Any())
+                box_file.Text = files.First();
+        }
+
+        private void Main_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if (files != null && files.Any())
+                box_file.Text = files.First();
+        }
+
+        private void Main_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Link;
+            else
+                e.Effect = DragDropEffects.None;
         }
     }
 }
